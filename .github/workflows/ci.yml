@@ -41,7 +41,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: ${{ matrix.name }}
-        run: xcodebuild test -scheme "Pulse" -destination "platform=macOS" clean -enableCodeCoverage YES -resultBundlePath "test_output/${{ matrix.name }}.xcresult" || exit 1
+        run: xcodebuild test -scheme "pulse" -destination "platform=macOS" clean -enableCodeCoverage YES -resultBundlePath "test_output/${{ matrix.name }}.xcresult" || exit 1
       - name: Upload test coverage reports to Codecov
         uses: space-code/oss-common-actions/.github/actions/upload_test_coverage_report@main
         with:
@@ -63,14 +63,10 @@ jobs:
             name: "iOS 18.1"
             xcode: "Xcode_16.1"
             runsOn: macOS-14
-          - destination: "OS=18.0,name=iPhone 16 Pro"
-            name: "iOS 18.0"
-            xcode: "Xcode_16.0"
-            runsOn: macOS-14
     steps:
       - uses: actions/checkout@v4
       - name: ${{ matrix.name }}
-        run: xcodebuild test -scheme "page-control" -destination "${{ matrix.destination }}" clean -enableCodeCoverage YES -resultBundlePath "test_output/${{ matrix.name }}.xcresult" || exit 1
+        run: xcodebuild test -scheme "pulse" -destination "${{ matrix.destination }}" clean -enableCodeCoverage YES -resultBundlePath "test_output/${{ matrix.name }}.xcresult" || exit 1
 
   tvOS:
     name: ${{ matrix.name }}
@@ -93,7 +89,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: ${{ matrix.name }}
-        run: xcodebuild test -scheme "Pulse" -destination "${{ matrix.destination }}" clean -enableCodeCoverage YES -resultBundlePath "test_output/${{ matrix.name }}.xcresult" || exit 1
+        run: xcodebuild test -scheme "pulse" -destination "${{ matrix.destination }}" clean -enableCodeCoverage YES -resultBundlePath "test_output/${{ matrix.name }}.xcresult" || exit 1
       - name: Upload test coverage reports to Codecov
         uses: space-code/oss-common-actions/.github/actions/upload_test_coverage_report@main
         with:
@@ -122,11 +118,11 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: ${{ matrix.name }}
-        run: xcodebuild test -scheme "Typhoon" -destination "${{ matrix.destination }}" clean -enableCodeCoverage YES -resultBundlePath "test_output/${{ matrix.name }}.xcresult" || exit 1
+        run: xcodebuild test -scheme "pulse" -destination "${{ matrix.destination }}" clean -enableCodeCoverage YES -resultBundlePath "test_output/${{ matrix.name }}.xcresult" || exit 1
       - name: Upload test coverage reports to Codecov
         uses: space-code/oss-common-actions/.github/actions/upload_test_coverage_report@main
         with:
-          scheme_name: Typhoon
+          scheme_name: Pulse
           filename: ${{ matrix.name }}
           token: ${{ secrets.CODECOV_TOKEN }}
   
