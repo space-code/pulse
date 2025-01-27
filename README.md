@@ -8,7 +8,7 @@
 <a href="https://codecov.io/gh/space-code/pulse"><img src="https://codecov.io/gh/space-code/pulse/graph/badge.svg?token=B5FNY6WLX0"/></a>
 
 ## Description
-`pulse` description.
+`pulse` is a Swift package designed to efficiently debounce values.
 
 - [Usage](#usage)
 - [Requirements](#requirements)
@@ -20,7 +20,22 @@
 
 ## Usage
 
+```swift
+import Pulse
+
+let debouncer = Debouncer<Int>(duration: .milliseconds(200)) { value in 
+    print(value)
+}
+
+debouncer.emit(1)
+debouncer.emit(2)
+```
+
 ## Requirements
+
+- iOS 16.0+ / macOS 13.0+ / watchOS 9.0+ / tvOS 16.0+ / visionOS 1.0+
+- Xcode 16.0
+- Swift 6.0
 
 ## Installation
 ### Swift Package Manager
