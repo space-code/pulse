@@ -82,10 +82,6 @@ jobs:
             name: "tvOS 18.1"
             xcode: "Xcode_16.1"
             runsOn: macOS-14
-          - destination: "OS=18.0,name=Apple TV"
-            name: "tvOS 18.0"
-            xcode: "Xcode_16.0"
-            runsOn: macOS-14
     steps:
       - uses: actions/checkout@v3
       - name: ${{ matrix.name }}
@@ -111,10 +107,6 @@ jobs:
             name: "watchOS 11.1"
             xcode: "Xcode_16.1"
             runsOn: macOS-14
-          - destination: "OS=11.0,name=Apple Watch Series 10 (46mm)"
-            name: "watchOS 11.0"
-            xcode: "Xcode_16.0"
-            runsOn: macOS-14
     steps:
       - uses: actions/checkout@v3
       - name: ${{ matrix.name }}
@@ -138,9 +130,6 @@ jobs:
         include:
           - name: "macOS 14, SPM 6.0.2 Test"
             xcode: "Xcode_16.1"
-            runsOn: macOS-14
-          - name: "macOS 14, SPM 6.0.0 Test"
-            xcode: "Xcode_16.0"
             runsOn: macOS-14
     steps:
       - uses: actions/checkout@v3
