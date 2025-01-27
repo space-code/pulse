@@ -35,9 +35,9 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - xcode: "Xcode_16.0"
+          - xcode: "Xcode_16.1"
             runsOn: macOS-14
-            name: "macOS 14, Xcode 16.0, Swift 6.0"
+            name: "macOS 14, SPM 6.0.2 Test"
     steps:
       - uses: actions/checkout@v3
       - name: ${{ matrix.name }}
