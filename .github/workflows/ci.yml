@@ -1,0 +1,166 @@
+name: "pulse"
+
+on:
+  push:
+    branches:
+      - main
+      - dev
+  pull_request:
+    paths:
+      - '.swiftlint.yml'
+      - ".github/workflows/**"
+      - "Package.swift"
+      - "Source/**"
+      - "Tests/**"
+
+jobs:
+  SwiftLint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: GitHub Action for SwiftLint
+        uses: norio-nomura/action-swiftlint@3.2.1
+        with:
+          args: --strict
+        env:
+          DIFF_BASE: ${{ github.base_ref }}
+
+  macOS:
+    name: ${{ matrix.name }}
+    runs-on: ${{ matrix.runsOn }}
+    env:
+      DEVELOPER_DIR: "/Applications/${{ matrix.xcode }}.app/Contents/Developer"
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - xcode: "Xcode_16.1"
+            runsOn: macOS-14
+            name: "macOS 14, SPM 6.0.2 Test"
+    steps:
+      - uses: actions/checkout@v3
+      - name: ${{ matrix.name }}
+        run: xcodebuild test -scheme "pulse" -destination "platform=macOS" clean -enableCodeCoverage YES -resultBundlePath "test_output/${{ matrix.name }}.xcresult" || exit 1
+      - name: Upload test coverage reports to Codecov
+        uses: space-code/oss-common-actions/.github/actions/upload_test_coverage_report@main
+        with:
+          scheme_name: Pulse
+          filename: ${{ matrix.name }}
+          token: ${{ secrets.CODECOV_TOKEN }}
+
+  iOS:
+    name: ${{ matrix.name }}
+    runs-on: ${{ matrix.runsOn }}
+    env:
+      DEVELOPER_DIR: "/Applications/${{ matrix.xcode }}.app/Contents/Developer"
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - destination: "OS=18.1,name=iPhone 16 Pro"
+            name: "iOS 18.1"
+            xcode: "Xcode_16.1"
+            runsOn: macOS-14
+    steps:
+      - uses: actions/checkout@v4
+      - name: ${{ matrix.name }}
+        run: xcodebuild test -scheme "pulse" -destination "${{ matrix.destination }}" clean -enableCodeCoverage YES -resultBundlePath "test_output/${{ matrix.name }}.xcresult" || exit 1
+
+  tvOS:
+    name: ${{ matrix.name }}
+    runs-on: ${{ matrix.runsOn }}
+    env:
+      DEVELOPER_DIR: "/Applications/${{ matrix.xcode }}.app/Contents/Developer"
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - destination: "OS=18.1,name=Apple TV"
+            name: "tvOS 18.1"
+            xcode: "Xcode_16.1"
+            runsOn: macOS-14
+    steps:
+      - uses: actions/checkout@v3
+      - name: ${{ matrix.name }}
+        run: xcodebuild test -scheme "pulse" -destination "${{ matrix.destination }}" clean -enableCodeCoverage YES -resultBundlePath "test_output/${{ matrix.name }}.xcresult" || exit 1
+      - name: Upload test coverage reports to Codecov
+        uses: space-code/oss-common-actions/.github/actions/upload_test_coverage_report@main
+        with:
+          scheme_name: Pulse
+          filename: ${{ matrix.name }}
+          token: ${{ secrets.CODECOV_TOKEN }}
+
+  watchOS:
+    name: ${{ matrix.name }}
+    runs-on: ${{ matrix.runsOn }}
+    env:
+      DEVELOPER_DIR: "/Applications/${{ matrix.xcode }}.app/Contents/Developer"
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - destination: "OS=11.1,name=Apple Watch Series 10 (46mm)"
+            name: "watchOS 11.1"
+            xcode: "Xcode_16.1"
+            runsOn: macOS-14
+    steps:
+      - uses: actions/checkout@v3
+      - name: ${{ matrix.name }}
+        run: xcodebuild test -scheme "pulse" -destination "${{ matrix.destination }}" clean -enableCodeCoverage YES -resultBundlePath "test_output/${{ matrix.name }}.xcresult" || exit 1
+      - name: Upload test coverage reports to Codecov
+        uses: space-code/oss-common-actions/.github/actions/upload_test_coverage_report@main
+        with:
+          scheme_name: Pulse
+          filename: ${{ matrix.name }}
+          token: ${{ secrets.CODECOV_TOKEN }}
+  
+  spm:
+    name: ${{ matrix.name }}
+    runs-on: ${{ matrix.runsOn }}
+    env:
+      DEVELOPER_DIR: "/Applications/${{ matrix.xcode }}.app/Contents/Developer"
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: "macOS 14, SPM 6.0.2 Test"
+            xcode: "Xcode_16.1"
+            runsOn: macOS-14
+    steps:
+      - uses: actions/checkout@v3
+      - name: ${{ matrix.name }}
+        run: swift build -c release
+
+  merge-test-reports:
+    needs: [iOS, macOS, watchOS, tvOS]
+    runs-on: macos-13
+    steps:
+      - name: Download artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: test_output
+      - run: xcrun xcresulttool merge test_output/**/*.xcresult --output-path test_output/final/final.xcresult
+      - name: Upload Merged Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: MergedResult
+          path: test_output/final
+
+  discover-typos:
+    name: Discover Typos
+    runs-on: macOS-13
+    env:
+      DEVELOPER_DIR: /Applications/Xcode_14.1.app/Contents/Developer
+    steps:
+      - uses: actions/checkout@v4
+      - name: Discover typos
+        run: |
+          export PATH="$PATH:/Library/Frameworks/Python.framework/Versions/3.11/bin"
+          python3 -m pip install --upgrade pip
+          python3 -m pip install codespell
+          codespell --ignore-words-list="hart,inout,msdos,sur" --skip="./.build/*,./.git/*"
