@@ -17,7 +17,7 @@ jobs:
   SwiftLint:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: GitHub Action for SwiftLint
         uses: norio-nomura/action-swiftlint@3.2.1
         with:
@@ -39,7 +39,7 @@ jobs:
             runsOn: macOS-14
             name: "macOS 14, SPM 6.0.2 Test"
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: ${{ matrix.name }}
         run: xcodebuild test -scheme "pulse" -destination "platform=macOS" clean -enableCodeCoverage YES -resultBundlePath "test_output/${{ matrix.name }}.xcresult" || exit 1
       - name: Upload test coverage reports to Codecov
@@ -83,7 +83,7 @@ jobs:
             xcode: "Xcode_16.1"
             runsOn: macOS-14
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: ${{ matrix.name }}
         run: xcodebuild test -scheme "pulse" -destination "${{ matrix.destination }}" clean -enableCodeCoverage YES -resultBundlePath "test_output/${{ matrix.name }}.xcresult" || exit 1
       - name: Upload test coverage reports to Codecov
@@ -108,7 +108,7 @@ jobs:
             xcode: "Xcode_16.1"
             runsOn: macOS-14
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: ${{ matrix.name }}
         run: xcodebuild test -scheme "pulse" -destination "${{ matrix.destination }}" clean -enableCodeCoverage YES -resultBundlePath "test_output/${{ matrix.name }}.xcresult" || exit 1
       - name: Upload test coverage reports to Codecov
@@ -132,7 +132,7 @@ jobs:
             xcode: "Xcode_16.1"
             runsOn: macOS-14
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: ${{ matrix.name }}
         run: swift build -c release
 
